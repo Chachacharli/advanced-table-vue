@@ -63,6 +63,7 @@
             :class="getClasses(props.config ?? {})"
             v-for="item in props.items"
             :key="item.id"
+            @click="handlerClick(item)"
           >
             <template v-for="td in headers" :key="td.key">
               <td v-if="$slots[`cell-${td.key}`]">
@@ -103,6 +104,10 @@ const getClasses = (config: AdvnacedTableConfig) => {
 }
 
 const tableRef = ref<HTMLElement>()
+
+const handlerClick = (item: unknown) => {
+  if (props.rowClick) props.rowClick(item)
+}
 
 // useColumnsResize(tableRef)
 useResizableColumns(tableRef)

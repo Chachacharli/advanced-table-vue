@@ -46,10 +46,19 @@ const config: Ref<AdvnacedTableConfig> = ref({
   risizable: true,
   noItemMessage: 'No items found',
 })
+
+const handlerClick = (item: User) => {
+  console.log('clicked', item)
+}
 </script>
 
 <template>
   <main>
-    <AdvanceTable :items="tableData" :headers="headers" :config="config"></AdvanceTable>
+    <AdvanceTable
+      :items="tableData"
+      :headers="headers"
+      :config="config"
+      :row-click="handlerClick"
+    ></AdvanceTable>
   </main>
 </template>
