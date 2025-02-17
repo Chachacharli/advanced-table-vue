@@ -13,7 +13,13 @@ const headers: AdvancedHeader[] = [
   { id: '2', label: 'Email', key: 'email', sorteable: true },
 ]
 
-const tableData: Ref<any[]> = ref([
+type User = {
+  id: string
+  name: string
+  email: string
+}
+
+const tableData: Ref<User[]> = ref([
   {
     id: '1',
     name: 'John Doe',
@@ -38,6 +44,7 @@ const config: Ref<AdvnacedTableConfig> = ref({
   hover: true,
   pointer: true,
   risizable: true,
+  noItemMessage: 'No items found',
 })
 </script>
 

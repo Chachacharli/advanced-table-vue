@@ -5,6 +5,7 @@ export type AdvnacedTableConfig = {
   hover?: boolean
   pointer?: boolean
   risizable?: boolean
+  noItemMessage?: string
 }
 
 export type AdvancedHeader = {
@@ -18,4 +19,5 @@ export type AdvancedTableProps = {
   headers: AdvancedHeader[]
   items: any[]
   config?: AdvnacedTableConfig
+  rowClick?: (item: any) => void
 }

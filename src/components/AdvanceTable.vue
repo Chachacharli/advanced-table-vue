@@ -9,8 +9,8 @@
             @dragover="onDragOver"
             @drop="onDrop(index)"
             @mouseenter="showOptions = index"
-            @mouseleave="showOptions = null"
             @click="toggleSort(header.key)"
+            @mouseleave="showOptions = null"
           >
             <div
               name="advanced-table-header"
@@ -40,6 +40,9 @@
               </span>
               <transition name="fade">
                 <div v-if="showOptions === index" class="header-options">
+                  <button name="btn-option" class="options-btn">
+                    <vue-feather type="more-vertical" size="18" />
+                  </button>
                   <button
                     class="drag-handle"
                     draggable="true"
@@ -54,22 +57,30 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          class="advanced-table-row"
-          :class="getClasses(props.config ?? {})"
-          v-for="item in props.items"
-          :key="item.id"
-        >
-          <template v-for="td in headers" :key="td.key">
-            <td v-if="$slots[`cell-${td.key}`]">
-              <slot :name="`cell-${td.key}`" :item="item" />
+        <template v-if="props.items.length > 0">
+          <tr
+            class="advanced-table-row"
+            :class="getClasses(props.config ?? {})"
+            v-for="item in props.items"
+            :key="item.id"
+          >
+            <template v-for="td in headers" :key="td.key">
+              <td v-if="$slots[`cell-${td.key}`]">
+                <slot :name="`cell-${td.key}`" :item="item" />
+              </td>
+              <td v-else>{{ item[td.key] }}</td>
+            </template>
+          </tr>
+        </template>
+        <template v-if="props.items.length === 0">
+          <tr>
+            <td :colspan="props.headers.length">
+              {{ props.config?.noItemMessage || 'No items found' }}
             </td>
-            <td v-else>{{ item[td.key] }}</td>
-          </template>
-        </tr>
+          </tr>
+        </template>
       </tbody>
     </table>
-    {{ sortState }}
   </main>
 </template>
 
@@ -120,15 +131,16 @@ const { sortState, toggleSort } = useSortableColumns()
   --table-row-bg: var(--color-gray-50);
   --table-row-hover: var(--color-gray-100);
   --table-text-color: #444;
-  --table-padding: 12px;
   --table-border-radius: 8px;
   --table-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 
-  --resize-line-color: #3b82f6; /* Color personalizable */
-  --resize-line-hover: #1d4ed8; /* Color hover */
-  --resize-line-width: 2px; /* Grosor de la línea */
+  --resize-line-color: #3b82f6;
+  --resize-line-hover: #1d4ed8;
+  --resize-line-width: 2px;
 
   --header-size-font: 1.2rem;
+  --heigth-row: 2rem;
+  --padding-row: 5px 0 5px 0;
 }
 
 .advanced-table-container {
@@ -158,7 +170,6 @@ const { sortState, toggleSort } = useSortableColumns()
 
 .advanced-table th,
 .advanced-table td {
-  padding: var(--table-padding);
   text-align: left;
   border-bottom: 1px solid var(--table-border);
   color: var(--table-text-color);
@@ -170,6 +181,13 @@ const { sortState, toggleSort } = useSortableColumns()
   font-size: var(--header-size-font);
 }
 
+.advanced-table tr {
+  height: var(--heigth-row);
+}
+
+.advanced-table td {
+  padding: var(--padding-row);
+}
 .advanced-table-row.can-hover:hover {
   background-color: var(--table-row-hover);
 }
@@ -222,6 +240,20 @@ th:hover > .resize-handle {
 
 .drag-handle:active {
   cursor: grabbing;
+}
+
+.options-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.5rem !important;
+  /* padding: 4px; */
+}
+
+.header-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
 }
 
 .fade-enter-active,
