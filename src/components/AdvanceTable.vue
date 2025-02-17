@@ -1,0 +1,236 @@
+<template>
+  <main name="advanced-table-container">
+    <table ref="tableRef" class="advanced-table resizable">
+      <thead>
+        <tr class="advanced-table-header">
+          <th
+            v-for="(header, index) in headers"
+            :key="header.key"
+            @dragover="onDragOver"
+            @drop="onDrop(index)"
+            @mouseenter="showOptions = index"
+            @mouseleave="showOptions = null"
+            @click="toggleSort(header.key)"
+          >
+            <div
+              name="advanced-table-header"
+              role="columnheader"
+              style="display: flex; justify-content: space-between; align-items: center"
+              :style="{ cursor: header.sorteable ? 'pointer' : 'default' }"
+            >
+              <span style="display: flex; align-items: center">
+                {{ header.label }}
+                <span v-if="header.sorteable" style="margin-left: 0.5rem">
+                  <vue-feather
+                    v-if="
+                      sortState[header.key] === null ||
+                      Object.keys(sortState).length === 0 ||
+                      !sortState[header.key]
+                    "
+                    type="minus"
+                    size="18"
+                  />
+                  <vue-feather v-if="sortState[header.key] === 'ASC'" type="chevron-up" size="18" />
+                  <vue-feather
+                    v-if="sortState[header.key] === 'DESC'"
+                    type="chevron-down"
+                    size="18"
+                  />
+                </span>
+              </span>
+              <transition name="fade">
+                <div v-if="showOptions === index" class="header-options">
+                  <button
+                    class="drag-handle"
+                    draggable="true"
+                    @dragstart="(e) => onDragStart(e, index)"
+                  >
+                    ⠿
+                  </button>
+                </div>
+              </transition>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          class="advanced-table-row"
+          :class="getClasses(props.config ?? {})"
+          v-for="item in props.items"
+          :key="item.id"
+        >
+          <template v-for="td in headers" :key="td.key">
+            <td v-if="$slots[`cell-${td.key}`]">
+              <slot :name="`cell-${td.key}`" :item="item" />
+            </td>
+            <td v-else>{{ item[td.key] }}</td>
+          </template>
+        </tr>
+      </tbody>
+    </table>
+    {{ sortState }}
+  </main>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { type AdvancedTableProps, type AdvnacedTableConfig } from '@/types/AdvanceTable'
+import { useResizableColumns } from '@/@core/useResizableColumns'
+import { useDraggableColumns } from '@/@core/useDraggableColumns'
+import { useSortableColumns } from '@/@core/useSortableColumns'
+
+const props = defineProps<AdvancedTableProps>()
+const showOptions = ref<number | null>(1)
+const headers = ref(props.headers)
+
+const getClasses = (config: AdvnacedTableConfig) => {
+  const classes = []
+  if (config.hover) classes.push('can-hover')
+  if (config.pointer) classes.push('can-pointer')
+  return classes
+}
+
+const tableRef = ref<HTMLElement>()
+
+// useColumnsResize(tableRef)
+useResizableColumns(tableRef)
+const { onDragStart, onDragOver, onDrop } = useDraggableColumns(headers)
+const { sortState, toggleSort } = useSortableColumns()
+</script>
+
+<style>
+:root {
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+
+  --table-bg: var(--color-gray-100);
+  --table-border: #e0e0e0;
+  --table-header-bg: var(--color-gray-200);
+  --table-header-text: #333;
+  --table-row-bg: var(--color-gray-50);
+  --table-row-hover: var(--color-gray-100);
+  --table-text-color: #444;
+  --table-padding: 12px;
+  --table-border-radius: 8px;
+  --table-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+  --resize-line-color: #3b82f6; /* Color personalizable */
+  --resize-line-hover: #1d4ed8; /* Color hover */
+  --resize-line-width: 2px; /* Grosor de la línea */
+
+  --header-size-font: 1.2rem;
+}
+
+.advanced-table-container {
+  overflow-x: auto;
+}
+
+.advanced-table-header {
+  background-color: var(--table-header-bg);
+}
+
+.advanced-table-row {
+  background-color: var(--table-row-bg);
+}
+
+.advanced-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--table-bg);
+  border-radius: var(--table-border-radius);
+  box-shadow: var(--table-shadow);
+}
+
+.advanced-table thead {
+  background-color: var(--table-header-bg);
+  color: var(--table-header-text);
+}
+
+.advanced-table th,
+.advanced-table td {
+  padding: var(--table-padding);
+  text-align: left;
+  border-bottom: 1px solid var(--table-border);
+  color: var(--table-text-color);
+  min-width: 50px;
+  max-width: 100%;
+  white-space: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--header-size-font);
+}
+
+.advanced-table-row.can-hover:hover {
+  background-color: var(--table-row-hover);
+}
+
+.advanced-table-row.can-pointer {
+  cursor: pointer;
+}
+
+.advanced-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Estilos para el handle de resize */
+.resize-handle {
+  right: -1px;
+  z-index: 1;
+  width: 4px !important;
+  background: transparent;
+}
+
+th:hover > .resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  cursor: col-resize;
+  border-right: 2px solid var(--color-gray-400);
+}
+
+.resize-handle:hover,
+.resize-handle:active {
+  width: 6px !important;
+}
+
+.advanced-table th {
+  position: relative;
+  /* background-clip: padding-box; */
+}
+
+.border-resize-active {
+  border-right: 2px solid var(--resize-line-hover) !important;
+}
+
+.drag-handle {
+  background: none;
+  border: none;
+  cursor: grab;
+  font-size: 1rem;
+  /* padding: 4px; */
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
