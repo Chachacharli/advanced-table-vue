@@ -1,6 +1,10 @@
 import { onMounted, onUnmounted, type Ref } from 'vue'
+import { type AdvancedHeader } from '@/types/AdvanceTable'
 
-export function useResizableColumns(tableRef: Ref<HTMLElement | undefined>) {
+export function useResizableColumns(
+  tableRef: Ref<HTMLElement | undefined>,
+  headers: Ref<AdvancedHeader[]>,
+) {
   let curCol: HTMLElement | null = null
   let pageX = 0
   let curColWidth = 0
@@ -8,6 +12,15 @@ export function useResizableColumns(tableRef: Ref<HTMLElement | undefined>) {
   let tableWidth = 0
 
   const MIN_WIDTH = 50 // Definir el ancho mínimo de las columnas
+
+  const saveColumnWidths = () => {
+    console.log('headers.value', headers.value)
+    const widths = headers.value.map((header) => ({
+      key: header.key,
+      width: document.querySelector(`th[data-key="${header.key}"]`)?.clientWidth || 'auto',
+    }))
+    localStorage.setItem('tableColumnWidths', JSON.stringify(widths))
+  }
 
   const createDiv = () => {
     const div = document.createElement('div')
@@ -61,6 +74,31 @@ export function useResizableColumns(tableRef: Ref<HTMLElement | undefined>) {
     pageX = 0
     curColWidth = 0
     // nxtColWidth = 0
+    console.log('saveColumnWidths')
+    saveColumnWidths()
+  }
+
+  const restoreColumnWidths = () => {
+    const savedWidths = localStorage.getItem('tableColumnWidths')
+    if (savedWidths) {
+      const widths = JSON.parse(savedWidths)
+      widths.forEach((width: any) => {
+        const column = document.querySelector(`th[data-key="${width.key}"]`) as HTMLElement
+        if (column) {
+          column.style.width = `${width.width}px`
+        }
+      })
+    }
+    const table = tableRef.value
+    if (table) {
+      // que el width de la tabla sea igual a la sumna de todos los widths de las columnas
+      const cols = table.querySelectorAll('thead tr th')
+      let totalWidth = 0
+      cols.forEach((col) => {
+        totalWidth += col.clientWidth
+      })
+      table.style.width = `${totalWidth}px`
+    }
   }
 
   const initResizableGrid = () => {
@@ -111,6 +149,7 @@ export function useResizableColumns(tableRef: Ref<HTMLElement | undefined>) {
     initResizableGrid()
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
+    restoreColumnWidths()
   })
 
   onUnmounted(() => {

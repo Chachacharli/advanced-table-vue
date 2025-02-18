@@ -9,8 +9,8 @@
             @dragover="onDragOver"
             @drop="onDrop(index)"
             @mouseenter="showOptions = index"
-            @click="toggleSort(header.key)"
             @mouseleave="showOptions = null"
+            :data-key="header.key"
           >
             <div
               name="advanced-table-header"
@@ -20,7 +20,11 @@
             >
               <span style="display: flex; align-items: center">
                 {{ header.label }}
-                <span v-if="header.sorteable" style="margin-left: 0.5rem">
+                <span
+                  @click="toggleSort(header.key)"
+                  v-if="header.sorteable"
+                  style="margin-left: 0.5rem"
+                >
                   <vue-feather
                     v-if="
                       sortState[header.key] === null ||
@@ -40,9 +44,9 @@
               </span>
               <transition name="fade">
                 <div v-if="showOptions === index" class="header-options">
-                  <button name="btn-option" class="options-btn">
+                  <!-- <button name="btn-options" class="options-btn" @click="handlerOptions">
                     <vue-feather type="more-vertical" size="18" />
-                  </button>
+                  </button> -->
                   <button
                     class="drag-handle"
                     draggable="true"
@@ -109,8 +113,7 @@ const handlerClick = (item: unknown) => {
   if (props.rowClick) props.rowClick(item)
 }
 
-// useColumnsResize(tableRef)
-useResizableColumns(tableRef)
+useResizableColumns(tableRef, headers)
 const { onDragStart, onDragOver, onDrop } = useDraggableColumns(headers)
 const { sortState, toggleSort } = useSortableColumns()
 </script>
@@ -150,6 +153,7 @@ const { sortState, toggleSort } = useSortableColumns()
 
 .advanced-table-container {
   overflow-x: auto;
+  width: 100%;
 }
 
 .advanced-table-header {
@@ -161,6 +165,7 @@ const { sortState, toggleSort } = useSortableColumns()
 }
 
 .advanced-table {
+  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
   background-color: var(--table-bg);
@@ -180,10 +185,12 @@ const { sortState, toggleSort } = useSortableColumns()
   color: var(--table-text-color);
   min-width: 50px;
   max-width: 100%;
-  white-space: wrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: var(--header-size-font);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .advanced-table tr {
@@ -196,10 +203,10 @@ const { sortState, toggleSort } = useSortableColumns()
 .advanced-table-row.can-hover:hover {
   background-color: var(--table-row-hover);
 }
-
+/* 
 .advanced-table-row.can-pointer {
   cursor: pointer;
-}
+} */
 
 .advanced-table tbody tr:last-child td {
   border-bottom: none;
@@ -253,6 +260,12 @@ th:hover > .resize-handle {
   cursor: pointer;
   font-size: 0.5rem !important;
   /* padding: 4px; */
+}
+
+.options-btn:hover {
+  cursor: pointer;
+  background-color: var(--color-gray-300);
+  border-radius: 5px;
 }
 
 .header-options {
