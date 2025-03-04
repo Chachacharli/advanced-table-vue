@@ -18,7 +18,7 @@
               style="display: flex; justify-content: space-between; align-items: center"
               :style="{ cursor: header.sorteable ? 'pointer' : 'default' }"
             >
-              <span style="display: flex; align-items: center">
+              <span name="header-label">
                 {{ header.label }}
                 <span
                   @click="toggleSort(header.key)"
@@ -290,7 +290,7 @@ th:hover > .resize-handle {
   padding: 0 4px;
 }
 
-span[style='display: flex; align-items: center'] {
+span[name='header-label'] {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
