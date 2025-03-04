@@ -77,7 +77,6 @@ export function useResizableColumns(
     curCol = null
     pageX = 0
     curColWidth = 0
-    // nxtColWidth = 0
     saveColumnWidths()
   }
 
@@ -120,7 +119,7 @@ export function useResizableColumns(
     for (let i = 0; i < cols.length; i++) {
       const col = cols[i] as HTMLElement
       col.style.position = 'relative'
-      col.style.minWidth = `${MIN_WIDTH}px` // Establecer el ancho mínimo
+      col.style.minWidth = `${MIN_WIDTH}px`
 
       const div = createDiv()
       col.appendChild(div)

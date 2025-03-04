@@ -6,7 +6,7 @@
           <th
             v-for="(header, index) in headers"
             :key="header.key"
-            @dragover="onDragOver"
+            @dragover="(event) => onDragOver(event, index)"
             @drop="onDrop(index)"
             @mouseenter="showOptions = index"
             @mouseleave="showOptions = null"
@@ -283,5 +283,9 @@ th:hover > .resize-handle {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+th.drag-over-left {
+  border-left: 2px solid var(--resize-line-color);
 }
 </style>
