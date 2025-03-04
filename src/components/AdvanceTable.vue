@@ -44,9 +44,9 @@
               </span>
               <transition name="fade">
                 <div v-if="showOptions === index" class="header-options">
-                  <!-- <button name="btn-options" class="options-btn" @click="handlerOptions">
+                  <button name="btn-options" class="options-btn" @click="handlerOptions">
                     <vue-feather type="more-vertical" size="18" />
-                  </button> -->
+                  </button>
                   <button
                     class="drag-handle"
                     draggable="true"
@@ -113,6 +113,10 @@ const handlerClick = (item: unknown) => {
   if (props.rowClick) props.rowClick(item)
 }
 
+const handlerOptions = () => {
+  console.log('Options')
+}
+
 useResizableColumns(tableRef, headers)
 const { onDragStart, onDragOver, onDrop } = useDraggableColumns(headers)
 const { sortState, toggleSort } = useSortableColumns()
@@ -177,6 +181,10 @@ const { sortState, toggleSort } = useSortableColumns()
 .advanced-table thead {
   background-color: var(--table-header-bg);
   color: var(--table-header-text);
+}
+
+.advanced-table th {
+  overflow: visible;
 }
 
 .advanced-table th,
@@ -270,9 +278,23 @@ th:hover > .resize-handle {
 }
 
 .header-options {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
   display: flex;
-  justify-content: space-between;
-  align-items: end;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--table-header-bg);
+  z-index: 1;
+  padding: 0 4px;
+}
+
+span[style='display: flex; align-items: center'] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
 }
 
 .fade-enter-active,

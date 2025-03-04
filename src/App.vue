@@ -209,11 +209,7 @@ const handlerClick = (item: Operation) => {
 
 <template>
   <main>
-    <AdvanceTable
-      :items="tableData"
-      :headers="headers"
-      :config="config"
-      :row-click="handlerClick"
-    ></AdvanceTable>
+    <AdvanceTable :items="tableData" :headers="headers" :config="config" :row-click="handlerClick">
+    </AdvanceTable>
   </main>
 </template>
