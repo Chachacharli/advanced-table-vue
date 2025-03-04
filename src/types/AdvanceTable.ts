@@ -1,6 +1,12 @@
+export type AdvancedHeaderFilter = {
+  key: string
+  label: string
+  type: string
+  data: string
+}
+
 export type AdvnacedTableConfig = {
-  filters?: any[]
-  columnWidths?: any[]
+  filters?: AdvancedHeaderFilter[]
   grid?: boolean
   hover?: boolean
   pointer?: boolean
@@ -17,7 +23,9 @@ export type AdvancedHeader = {
 
 export type AdvancedTableProps = {
   headers: AdvancedHeader[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   items: any[]
   config?: AdvnacedTableConfig
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rowClick?: (item: any) => void
 }
