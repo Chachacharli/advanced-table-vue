@@ -12,6 +12,7 @@ export type AdvnacedTableConfig = {
   pointer?: boolean
   risizable?: boolean
   noItemMessage?: string
+  notFiltersMessage?: string
 }
 
 export type AdvancedHeader = {

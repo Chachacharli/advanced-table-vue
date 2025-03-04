@@ -43,10 +43,13 @@
                 </span>
               </span>
               <transition name="fade">
-                <div v-if="showOptions === index" class="header-options">
-                  <button name="btn-options" class="options-btn" @click="handlerOptions">
-                    <vue-feather type="more-vertical" size="18" />
-                  </button>
+                <div v-if="showOptions === index" class="header-options dropdown-menu">
+                  <HeaderOptions
+                    :header="header"
+                    :index="index"
+                    :filters="props.config.filters"
+                    :message="props.config.notFiltersMessage"
+                  />
                   <button
                     class="drag-handle"
                     draggable="true"
@@ -95,6 +98,7 @@ import { type AdvancedTableProps, type AdvnacedTableConfig } from '@/types/Advan
 import { useResizableColumns } from '@/@core/useResizableColumns'
 import { useDraggableColumns } from '@/@core/useDraggableColumns'
 import { useSortableColumns } from '@/@core/useSortableColumns'
+import HeaderOptions from '@/components/HeaderOptions.vue'
 
 const props = defineProps<AdvancedTableProps>()
 const showOptions = ref<number | null>(1)
@@ -111,10 +115,6 @@ const tableRef = ref<HTMLElement>()
 
 const handlerClick = (item: unknown) => {
   if (props.rowClick) props.rowClick(item)
-}
-
-const handlerOptions = () => {
-  console.log('Options')
 }
 
 useResizableColumns(tableRef, headers)
@@ -225,7 +225,6 @@ main[name='advanced-table-container'] {
   min-width: var(--table-cell-min-width);
   font-size: var(--table-font-size);
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
 }
 

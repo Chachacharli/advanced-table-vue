@@ -200,6 +200,7 @@ const config: Ref<AdvnacedTableConfig> = ref({
   pointer: false,
   risizable: true,
   noItemMessage: 'No items found',
+  notFiltersMessage: 'No filters found',
 })
 
 // const handlerClick = (item: Operation) => {
