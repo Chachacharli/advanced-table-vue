@@ -1,18 +1,26 @@
-import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
+import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
-import vueDevTools from 'vite-plugin-vue-devtools'
+import dts from 'vite-plugin-dts'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueDevTools(),
-  ],
+  plugins: [vue(), dts()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  build: {
+    lib: {
+      entry: 'src/components/index.ts', // Archivo de entrada
+      name: 'VueAdvancedTable',
+      fileName: (format) => `vue-advanced-table.${format}.js`,
+    },
+    rollupOptions: {
+      external: ['vue'],
+      output: {
+        globals: { vue: 'Vue' },
+      },
     },
   },
 })
