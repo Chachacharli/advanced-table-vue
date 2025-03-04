@@ -2,7 +2,7 @@
   <main name="advanced-table-container">
     <table ref="tableRef" class="advanced-table resizable">
       <thead>
-        <tr class="advanced-table-header">
+        <tr class="advanced-table-header-row">
           <th
             v-for="(header, index) in headers"
             :key="header.key"
@@ -103,7 +103,7 @@ const headers = ref(props.headers)
 const getClasses = (config: AdvnacedTableConfig) => {
   const classes = []
   if (config.hover) classes.push('can-hover')
-  if (config.pointer) classes.push('can-pointer')
+  if (config.pointer || props.rowClick) classes.push('can-pointer')
   return classes
 }
 
@@ -124,6 +124,13 @@ const { sortState, toggleSort } = useSortableColumns()
 
 <style>
 :root {
+  /** 
+   * Color Scheme
+   * ----------------------------------------------------------------------
+   */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #1d4ed8;
+
   --color-gray-50: #f9fafb;
   --color-gray-100: #f3f4f6;
   --color-gray-200: #e5e7eb;
@@ -131,102 +138,95 @@ const { sortState, toggleSort } = useSortableColumns()
   --color-gray-400: #9ca3af;
   --color-gray-500: #6b7280;
   --color-gray-600: #4b5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #111827;
-  --color-gray-950: #030712;
 
-  --table-bg: var(--color-gray-100);
-  --table-border: #e0e0e0;
-  --table-header-bg: var(--color-gray-200);
-  --table-header-text: #333;
-  --table-row-bg: var(--color-gray-50);
-  --table-row-hover: var(--color-gray-100);
-  --table-text-color: #444;
+  /**
+   * Table Structure
+   * ----------------------------------------------------------------------
+   */
+  --table-width: 100%;
   --table-border-radius: 8px;
-  --table-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  --table-row-height: 2rem;
+  --table-row-padding: 0.5rem 1rem;
+  --table-cell-min-width: 50px;
+  --table-cell-padding: 0.5rem 1rem;
 
-  --resize-line-color: #3b82f6;
-  --resize-line-hover: #1d4ed8;
-  --resize-line-width: 2px;
+  /**
+   * Table Colors
+   * ----------------------------------------------------------------------
+   */
+  --table-bg-color: var(--color-gray-100);
+  --table-header-bg-color: var(--color-gray-200);
+  --table-row-bg-color: var(--color-gray-50);
+  --table-row-hover-color: var(--color-gray-100);
+  --table-border-color: #e0e0e0;
+  --table-text-color: #444;
+  --table-header-text-color: #333;
 
-  --header-size-font: 1.2rem;
-  --heigth-row: 2rem;
-  --padding-row: 5px 0 5px 0;
+  /**
+   * Interactive Elements
+   * ----------------------------------------------------------------------
+   */
+  --resize-handle-width: 4px;
+  --resize-handle-hover-width: 6px;
+  --resize-line-color: var(--color-primary);
+  --resize-line-hover-color: var(--color-primary-hover);
+
+  /**
+   * Typography
+   * ----------------------------------------------------------------------
+   */
+  --table-font-size: 0.875rem;
+  --table-header-font-size: 1rem;
+  --table-icon-size: 1.125rem;
+
+  /**
+   * Effects
+   * ----------------------------------------------------------------------
+   */
+  --table-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  --transition-duration: 0.2s;
 }
 
-.advanced-table-container {
+main[name='advanced-table-container'] {
+  --scrollbar-track-color: var(--color-gray-200);
+  --scrollbar-thumb-color: var(--color-gray-400);
+
   overflow-x: auto;
-  width: 100%;
+  -webkit-overflow-scrolling: touch;
   max-width: 100%;
-}
-
-.advanced-table-header {
-  background-color: var(--table-header-bg);
-}
-
-.advanced-table-row {
-  background-color: var(--table-row-bg);
+  scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
 }
 
 .advanced-table {
   table-layout: fixed;
-  width: 100%;
+  width: var(--table-width);
   border-collapse: collapse;
-  background-color: var(--table-bg);
+  background-color: var(--table-bg-color);
   border-radius: var(--table-border-radius);
-  box-shadow: var(--table-shadow);
+  box-shadow: var(--table-box-shadow);
 }
 
-.advanced-table thead {
-  background-color: var(--table-header-bg);
-  color: var(--table-header-text);
+.advanced-table-header {
+  background-color: var(--table-header-bg-color);
+  color: var(--table-header-text-color);
+  font-size: var(--table-header-font-size);
 }
 
-.advanced-table th {
-  overflow: visible;
+.advanced-table-row {
+  background-color: var(--table-row-bg-color);
+  height: var(--table-row-height);
 }
 
 .advanced-table th,
 .advanced-table td {
-  text-align: left;
-  border-bottom: 1px solid var(--table-border);
+  padding: var(--table-cell-padding);
   color: var(--table-text-color);
-  min-width: 50px;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: var(--header-size-font);
+  border-bottom: 1px solid var(--table-border-color);
+  min-width: var(--table-cell-min-width);
+  font-size: var(--table-font-size);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.advanced-table tr {
-  height: var(--heigth-row);
-}
-
-.advanced-table td {
-  padding: var(--padding-row);
-}
-.advanced-table-row.can-hover:hover {
-  background-color: var(--table-row-hover);
-}
-/* 
-.advanced-table-row.can-pointer {
-  cursor: pointer;
-} */
-
-.advanced-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* Estilos para el handle de resize */
-.resize-handle {
-  right: -1px;
-  z-index: 1;
-  width: 4px !important;
-  background: transparent;
 }
 
 th:hover > .resize-handle {
@@ -242,13 +242,45 @@ th:hover > .resize-handle {
   width: 6px !important;
 }
 
-.advanced-table th {
-  position: relative;
-  /* background-clip: padding-box; */
+.border-resize-active {
+  border-right: 2px solid var(--resize-line-color) !important;
 }
 
+.advanced-table td {
+  padding: var(--table-row-padding);
+}
+
+/* Interactive States */
+.advanced-table-row.can-hover:hover {
+  background-color: var(--table-row-hover);
+}
+
+.resize-handle {
+  width: var(--resize-handle-width);
+  background: transparent;
+}
+
+.resize-handle:hover,
+.resize-handle:active {
+  width: var(--resize-handle-hover-width);
+  border-right-color: var(--resize-line-hover-color);
+}
+
+/* Icon Sizing */
+.vue-feather {
+  width: var(--table-icon-size);
+  height: var(--table-icon-size);
+}
+
+/* Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity var(--transition-duration) ease-in-out;
+}
+
+/* Drag and Drop Visuals */
 .border-resize-active {
-  border-right: 2px solid var(--resize-line-hover) !important;
+  border-right: var(--resize-handle-width) solid var(--resize-line-hover-color);
 }
 
 .drag-handle {
@@ -285,29 +317,15 @@ th:hover > .resize-handle {
   display: flex;
   align-items: center;
   gap: 4px;
-  background-color: var(--table-header-bg);
+  background-color: var(--table-bg-color);
   z-index: 1;
   padding: 0 4px;
+  margin-right: 0.5rem;
 }
 
 span[name='header-label'] {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-right: 8px;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease-in-out;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-th.drag-over-left {
-  border-left: 2px solid var(--resize-line-color);
 }
 </style>

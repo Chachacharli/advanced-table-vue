@@ -197,14 +197,14 @@ tableData.value = [...tableData.value, ...tableData.value, ...tableData.value]
 
 const config: Ref<AdvnacedTableConfig> = ref({
   hover: true,
-  pointer: true,
+  pointer: false,
   risizable: true,
   noItemMessage: 'No items found',
 })
 
-const handlerClick = (item: Operation) => {
-  console.log('clicked', item)
-}
+// const handlerClick = (item: Operation) => {
+//   alert(item.folio)
+// }
 </script>
 
 <template>

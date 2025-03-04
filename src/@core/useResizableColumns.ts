@@ -13,10 +13,9 @@ export function useResizableColumns(
   let curCol: HTMLElement | null = null
   let pageX = 0
   let curColWidth = 0
-  // let nxtColWidth = 0
   let tableWidth = 0
 
-  const MIN_WIDTH = 50 // Definir el ancho mínimo de las columnas
+  const MIN_WIDTH = 50
 
   const saveColumnWidths = () => {
     const widths = headers.value.map((header) => ({
