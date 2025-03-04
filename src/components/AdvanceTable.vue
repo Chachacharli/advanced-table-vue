@@ -154,6 +154,7 @@ const { sortState, toggleSort } = useSortableColumns()
 .advanced-table-container {
   overflow-x: auto;
   width: 100%;
+  max-width: 100%;
 }
 
 .advanced-table-header {

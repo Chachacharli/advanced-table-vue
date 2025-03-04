@@ -1,6 +1,11 @@
 import { onMounted, onUnmounted, type Ref } from 'vue'
 import { type AdvancedHeader } from '@/types/AdvanceTable'
 
+type Width = {
+  key: string
+  width: number
+}
+
 export function useResizableColumns(
   tableRef: Ref<HTMLElement | undefined>,
   headers: Ref<AdvancedHeader[]>,
@@ -14,7 +19,6 @@ export function useResizableColumns(
   const MIN_WIDTH = 50 // Definir el ancho mínimo de las columnas
 
   const saveColumnWidths = () => {
-    console.log('headers.value', headers.value)
     const widths = headers.value.map((header) => ({
       key: header.key,
       width: document.querySelector(`th[data-key="${header.key}"]`)?.clientWidth || 'auto',
@@ -74,19 +78,21 @@ export function useResizableColumns(
     pageX = 0
     curColWidth = 0
     // nxtColWidth = 0
-    console.log('saveColumnWidths')
     saveColumnWidths()
   }
 
   const restoreColumnWidths = () => {
+    let tableWidth = 0
     const savedWidths = localStorage.getItem('tableColumnWidths')
     if (savedWidths) {
-      const widths = JSON.parse(savedWidths)
-      widths.forEach((width: any) => {
+      const widths: Width[] = JSON.parse(savedWidths)
+      widths.forEach((width: Width) => {
         const column = document.querySelector(`th[data-key="${width.key}"]`) as HTMLElement
         if (column) {
           column.style.width = `${width.width}px`
+          tableWidth += width.width
         }
+        tableRef.value?.style.setProperty('width', `${tableWidth}px`, 'important')
       })
     }
     const table = tableRef.value
