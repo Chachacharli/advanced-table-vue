@@ -47,8 +47,8 @@
                   <HeaderOptions
                     :header="header"
                     :index="index"
-                    :filters="props.config.filters"
-                    :message="props.config.notFiltersMessage"
+                    :filters="props.config?.filters ?? []"
+                    :message="props.config?.notFiltersMessage ?? ''"
                   />
                   <button
                     class="drag-handle"

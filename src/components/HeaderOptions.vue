@@ -1,12 +1,12 @@
 <template>
-  <div class="header-options-container">
+  <div ref="dropdownRef" class="header-options-container" :style="dropdownStyle">
     <button name="btn-options" class="options-btn" @click.stop="toggleDropdown">
       <vue-feather type="more-vertical" size="18" />
     </button>
 
     <transition name="fade">
       <ul v-if="isOpen" class="dropdown-menu">
-        <li v-for="filter in filters" :key="filter" @click="applyFilter"></li>
+        <li v-for="filter in filters" :key="filter.key" @click="applyFilter"></li>
         <li class="not-found-data" v-if="filters.length === 0">
           <span>{{ props.message }}</span>
         </li>
@@ -22,11 +22,11 @@ import { type AdvancedHeader, type AdvancedHeaderFilter } from '@/types/AdvanceT
 const props = defineProps<{
   header: AdvancedHeader
   index: number
-  filters: unknown
+  filters: AdvancedHeaderFilter[]
   message: string
 }>()
 
-const filters: AdvancedHeaderFilter = ref(props.filters || [])
+const filters = ref<AdvancedHeaderFilter[]>(props.filters || [])
 
 const isOpen = ref(false)
 
@@ -41,7 +41,12 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
-onMounted(() => document.addEventListener('click', handleClickOutside))
+const dropdownRef = ref<HTMLElement | null>(null)
+const dropdownStyle = ref<{ left?: string; right?: string }>({})
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
 onUnmounted(() => document.removeEventListener('click', handleClickOutside))
 
 const applyFilter = () => console.log(`Aplicando filtro en ${props.header.label}`)
