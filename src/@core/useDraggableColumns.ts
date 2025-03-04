@@ -32,19 +32,16 @@ export function useDraggableColumns(headers: Ref<AdvancedHeader[]>) {
     if (thElement) {
       const clone = thElement.cloneNode(true) as HTMLElement
       clone.style.position = 'absolute'
-      clone.style.top = '-9999px'
-
-      clone.style.transform = 'rotate(8deg)'
-      clone.style.background = 'white'
-      clone.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)'
-      clone.style.opacity = '0.9'
+      clone.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.82)'
+      clone.style.opacity = '1'
       clone.style.padding = '8px'
       clone.style.border = '1px solid #ccc'
       clone.style.zIndex = '9999'
       clone.style.maxWidth = '200px'
+      clone.style.transformOrigin = 'center'
 
       document.body.appendChild(clone)
-      event.dataTransfer?.setDragImage(clone, 10, 10)
+      event.dataTransfer?.setDragImage(clone, 20, 20)
 
       setTimeout(() => document.body.removeChild(clone), 0)
     }
